@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+models/modelo.pkl
+models/resultados.json
+data/original/
+uploads/*.csv
+teste_*
+.vscode/
+.idea/
