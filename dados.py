@@ -42,3 +42,12 @@ def ler_csv(caminho):
         raise ErroCSV("Faltam as colunas obrigatórias: " + ", ".join(faltando) +
                       ". Colunas esperadas: " + ", ".join(COLUNAS_OBRIGATORIAS) + ".")
     return df[COLUNAS_OBRIGATORIAS].copy()   # fica só com as colunas usadas
+
+
+def diagnostico(df):
+    """Tabela simples: tipo e quantidade de valores ausentes de cada coluna."""
+    return pd.DataFrame({
+        "coluna": df.columns,
+        "tipo": [str(t) for t in df.dtypes],
+        "ausentes": df.isna().sum().values,
+    })
