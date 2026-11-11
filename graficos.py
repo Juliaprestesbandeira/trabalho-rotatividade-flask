@@ -27,3 +27,16 @@ def grafico_distribuicao(df):
     ax.set_ylabel("Quantidade de funcionários")
     ax.legend()
     return _para_base64(fig)
+
+
+def grafico_comparacao(df):
+    """2) COMPARAÇÃO: barras com a quantidade de funcionários por classe do alvo."""
+    contagem = df[ALVO].value_counts().sort_index()
+    fig = Figure(figsize=(5.5, 3.8))
+    ax = fig.subplots()
+    barras = ax.bar(["Ficou (0)", "Saiu (1)"],
+                    [contagem.get(0, 0), contagem.get(1, 0)], color=[COR_FICOU, COR_SAIU])
+    ax.bar_label(barras)
+    ax.set_title("Funcionários que ficaram e que saíram")
+    ax.set_ylabel("Quantidade de funcionários")
+    return _para_base64(fig)
