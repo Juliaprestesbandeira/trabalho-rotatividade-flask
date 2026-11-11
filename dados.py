@@ -51,3 +51,39 @@ def diagnostico(df):
         "tipo": [str(t) for t in df.dtypes],
         "ausentes": df.isna().sum().values,
     })
+
+
+def limpar(df):
+    """Limpa os dados e devolve (df_limpo, log). O log lista cada transformação."""
+    log = []
+    df = df.copy()
+    log.append(f"Tamanho original: {len(df)} linhas.")
+    # 1) Converter tudo para número. Texto inválido vira NaN (ausente).
+    for col in COLUNAS_OBRIGATORIAS:
+        df[col] = pd.to_numeric(df[col], errors="coerce")
+    # 2) Remover duplicatas (linhas repetidas distorcem as estatísticas)
+    n = len(df)
+    df = df.drop_duplicates()
+    log.append(f"Duplicatas removidas: {n - len(df)}.")
+    # 3) Remover linhas com valores ausentes (poucas linhas; evita inventar dados)
+    n = len(df)
+    df = df.dropna()
+    log.append(f"Linhas com valores ausentes ou não numéricos removidas: {n - len(df)}.")
+    # 4) Remover valores impossíveis (fora da faixa plausível de cada coluna)
+    n = len(df)
+    for col, (_, minimo, maximo) in COLUNAS_X.items():
+        df = df[(df[col] >= minimo) & (df[col] <= maximo)]
+        if col in INTEIROS:                        # satisfação e horas extras não podem ter casa decimal
+            df = df[df[col] == df[col].round()]
+    log.append(f"Linhas com valores impossíveis removidas: {n - len(df)}.")
+    # 5) O alvo precisa ser 0 ou 1
+    n = len(df)
+    df = df[df[ALVO].isin([0, 1])]
+    df[ALVO] = df[ALVO].astype(int)
+    log.append(f"Linhas com alvo diferente de 0/1 removidas: {n - len(df)}.")
+    log.append(f"Tamanho final: {len(df)} linhas.")
+    if len(df) < 30:
+        raise ErroCSV("Depois da limpeza sobraram menos de 30 linhas. Confira os dados do arquivo.")
+    if df[ALVO].nunique() < 2:
+        raise ErroCSV("A coluna " + ALVO + " precisa ter exemplos de 0 e de 1.")
+    return df, log
