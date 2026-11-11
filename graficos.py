@@ -40,3 +40,14 @@ def grafico_comparacao(df):
     ax.set_title("Funcionários que ficaram e que saíram")
     ax.set_ylabel("Quantidade de funcionários")
     return _para_base64(fig)
+
+
+def grafico_relacao(df):
+    """3) RELAÇÃO: boxplot do tempo de empresa para cada classe do alvo."""
+    fig = Figure(figsize=(5.5, 3.8))
+    ax = fig.subplots()
+    ax.boxplot([df[df[ALVO] == 0]["anos_empresa"], df[df[ALVO] == 1]["anos_empresa"]])
+    ax.set_xticklabels(["Ficou (0)", "Saiu (1)"])
+    ax.set_title("Tempo de empresa por classe do alvo")
+    ax.set_ylabel("Tempo na empresa (anos)")
+    return _para_base64(fig)
