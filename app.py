@@ -22,7 +22,36 @@ MODELO = modelo.carregar_modelo()                    # carrega (ou treina) uma v
 def index():
     return render_template("index.html", colunas=dados.COLUNAS_OBRIGATORIAS, erro=None)
  
+def montar_analise(caminho, nome_arquivo):
+    """Lê, limpa, analisa e gera os gráficos de um CSV. Devolve o dicionário para a página."""
+    bruto = dados.ler_csv(caminho)                   # o arquivo original não é alterado
+    diag = dados.diagnostico(bruto)
+    limpo, log = dados.limpar(bruto)
+    resumo = dados.analisar(limpo)
+    return {
+        "arquivo": nome_arquivo,
+        "linhas_antes": len(bruto), "linhas_depois": len(limpo), "n_colunas": bruto.shape[1],
+        "amostra": bruto.head(5).to_html(index=False, classes="tabela"),
+        "diagnostico": diag.to_html(index=False, classes="tabela"),
+        "log": log,
+        "estatisticas": resumo["estatisticas"].to_html(classes="tabela"),
+        "medias": resumo["medias"].to_html(classes="tabela"),
+        "achados": resumo["achados"],
+        "g1": graficos.grafico_distribuicao(limpo),
+        "g2": graficos.grafico_comparacao(limpo),
+        "g3": graficos.grafico_relacao(limpo),
+    }
  
+ 
+@app.route("/analise")
+def analise():
+    try:
+        resultado = montar_analise(ARQ_EXEMPLO, "rotatividade.csv (exemplo)")
+    except dados.ErroCSV as e:
+        return render_template("index.html", colunas=dados.COLUNAS_OBRIGATORIAS, erro=str(e))
+    return render_template("analise.html", r=resultado)
+
+
 if __name__ == "__main__":
     # debug=False e use_reloader=False são necessários para rodar no IDLE
     app.run(debug=False, use_reloader=False)
