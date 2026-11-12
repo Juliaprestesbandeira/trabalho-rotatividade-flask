@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block titulo %}Previsão{% endblock %}
+{% block conteudo %}
+<h2>Previsão para um funcionário</h2>
+<p>Modelo em uso: <b>{{ info.modelo_escolhido }}</b>, treinado com {{ info.base }} ({{ info.linhas_usadas }} registros,
+versão de {{ info.treinado_em }}). Preencha os dados do funcionário:</p>
+{% if erro %}<p class="erro">{{ erro }}</p>{% endif %}
+<form method="post" action="/previsao">
+  {% for nome, (rotulo, minimo, maximo) in campos.items() %}
+  <label>{{ rotulo }} (entre {{ minimo }} e {{ maximo }})
+    <input type="text" name="{{ nome }}" value="{{ valores.get(nome, '') }}">
+  </label>
+  {% endfor %}
+  <button type="submit">Prever</button>
+</form>
+{% if resultado %}
+<p class="ok">
+  {% if resultado.classe == 1 %}Previsão: o funcionário tende a <b>SAIR</b> da empresa.
+  {% else %}Previsão: o funcionário tende a <b>FICAR</b> na empresa.{% endif %}
+  <br>Probabilidade estimada de saída: {{ resultado.prob }}%.
+</p>
+{% endif %}
+<p class="aviso">Estudo didático feito com a base fictícia IBM HR Analytics. Não deve ser usado para decidir sobre pessoas reais.</p>
+{% endblock %}

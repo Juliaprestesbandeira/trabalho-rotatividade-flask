@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block titulo %}Modelos{% endblock %}
+{% block conteudo %}
+<h2>Comparação de modelos</h2>
+<p>Base de treino: <b>{{ info.base }}</b> ({{ info.linhas_usadas }} registros). Divisão: {{ info.treino }} para treino e
+{{ info.teste }} para teste (proporção de teste {{ info.proporcao_teste }}, random_state={{ info.random_state }}).
+Mesma divisão para todos os modelos. Treinado em {{ info.treinado_em }} (scikit-learn {{ info.versao_sklearn }}).</p>
+<p>Teste: {{ info.teste_classe_0 }} exemplos da classe 0 e {{ info.teste_classe_1 }} da classe 1.
+Um chute fixo na classe mais frequente acertaria <b>{{ (info.baseline * 100) | round(1) }}%</b>.</p>
+<table class="tabela">
+  <tr><th>Modelo</th><th>Acurácia treino</th><th>Acurácia teste</th><th>Recall (saiu)</th><th>Precisão (saiu)</th><th>Matriz de confusão</th></tr>
+  {% for r in info.resultados %}
+  <tr {% if r.modelo == info.modelo_escolhido %}style="background:#eaf6ee"{% endif %}>
+    <td>{{ r.modelo }}</td><td>{{ r.acuracia_treino }}</td><td>{{ r.acuracia_teste }}</td><td>{{ r.recall_saiu }}</td><td>{{ r.precisao_saiu }}</td>
+    <td>Acertou "ficou": {{ r.matriz[0][0] }} | Previu "saiu", mas ficou: {{ r.matriz[0][1] }}<br>
+        Previu "ficou", mas saiu: {{ r.matriz[1][0] }} | Acertou "saiu": {{ r.matriz[1][1] }}</td>
+  </tr>
+  {% endfor %}
+</table>
+<p class="aviso">Como ler a matriz: linhas = classe real, colunas = classe prevista.
+Recall = de quem realmente saiu, quantos o modelo encontrou. Precisão = de quem o modelo previu que sairia,
+quantos realmente saíram.</p>
+<h3>Modelo escolhido: {{ info.modelo_escolhido }}</h3>
+<p>Escolhido por ter o maior recall de quem saiu (desempate pela acurácia no teste). Como só cerca de 16% dos
+funcionários saíram, os três modelos foram treinados com <code>class_weight="balanced"</code> (mais peso a quem saiu).
+Atenção: a acurácia dos modelos fica abaixo do chute fixo em "ficou", mas esse chute nunca encontraria ninguém
+que vai sair (recall zero). O erro mais grave aqui é "previu ficou, mas saiu", pois um funcionário em risco passaria
+despercebido; o custo é aceitar mais falsos alarmes ("previu saiu, mas ficou"), por isso a precisão é baixa.
+Limitações: apenas 6 variáveis, base fictícia e só 47 exemplos de quem saiu no teste.</p>
+{% endblock %}
