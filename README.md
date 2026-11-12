@@ -30,3 +30,26 @@ Com dados básicos de um funcionário, é possível prever se ele **vai sair (1)
 | saiu | y | 1 = saiu da empresa, 0 = ficou (`Attrition`) | só 0 ou 1 |
  
 Todas as colunas de X são dados conhecidos antes de o funcionário sair. O alvo não entra em X. As colunas de identificação (`EmployeeNumber`) e as colunas constantes (`EmployeeCount`, `Over18`, `StandardHours`) foram excluídas, assim como as demais colunas da base original, para manter o modelo simples e as entradas compreensíveis.
+
+## Instalação e execução
+1. Instale o Python 3 e, no Prompt de Comando: `pip install -r requirements.txt`
+2. Abra `app.py` no IDLE e aperte **F5** (ou rode `python app.py`).
+3. Abra no navegador: http://127.0.0.1:5000
+4. (Opcional) Abra `treinar.py` e aperte F5 para retreinar e ver os resultados no console. Se `models/modelo.pkl` não existir, o `app.py` treina sozinho ao iniciar.
+ 
+## Estrutura
+- `app.py`: rotas Flask e integração
+- `gerar_base.py`: gera o CSV de exemplo a partir da base original
+- `dados.py`: leitura, validação, limpeza e análise (Pandas)
+- `graficos.py`: os 3 gráficos
+- `modelo.py`: validação do formulário, carregamento e previsão
+- `treinar.py`: treino, comparação e avaliação dos modelos
+- `templates/`: páginas HTML
+- `data/`: CSV de exemplo | `models/`: modelo salvo e resultados (gerados ao rodar) | `uploads/`: CSVs enviados (originais intactos)
+- `docs/`: roteiro da demonstração e testes manuais
+ 
+## Limpeza dos dados
+Conversão para número, remoção de duplicatas, de linhas com valores ausentes/não numéricos e de valores impossíveis (fora das faixas da tabela acima, ou com casa decimal em `satisfacao_trabalho` e `horas_extras`). Remover (em vez de preencher) evita inventar dados. A tela de análise mostra o tamanho antes e depois e o registro de cada transformação. Na base de exemplo nada precisou ser removido (1470 linhas antes e depois). O CSV original nunca é modificado.
+ 
+## Gráficos (3)
+Histograma da renda mensal (distribuição), barras de funcionários que ficaram e que saíram (comparação) e boxplot do tempo de empresa por classe (relação). Cada um tem interpretação na própria página.
