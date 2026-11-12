@@ -73,3 +73,6 @@ Apenas 6 variáveis e uma base fictícia; só 47 exemplos de quem saiu no teste,
  
 ## Ferramentas e autoria
 Código desenvolvido com apoio da IA Claude (Anthropic), e revisado pelo grupo. Bibliotecas: Flask, Pandas, scikit-learn, Matplotlib, joblib.
+
+## Versão entregue
+A versão avaliada é a da tag `v1.0` (branch `main`). Alterações posteriores só com autorização do professor.
