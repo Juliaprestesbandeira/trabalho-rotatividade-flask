@@ -66,7 +66,14 @@ def analise():
         return render_template("index.html", colunas=dados.COLUNAS_OBRIGATORIAS, erro=str(e))
     return render_template("analise.html", r=resultado)
 
+def ler_resultados():
+    with open(modelo.ARQ_RESULTADOS, encoding="utf-8") as f:
+        return json.load(f)
 
+
+@app.route("/modelos")
+def modelos():
+    return render_template("modelos.html", info=ler_resultados())
 
 if __name__ == "__main__":
     # debug=False e use_reloader=False são necessários para rodar no IDLE
