@@ -76,11 +76,18 @@ def modelos():
     return render_template("modelos.html", info=ler_resultados())
 
 
-@app.route("/previsao")
+@app.route("/previsao", methods=["GET", "POST"])
 def previsao():
     info = ler_resultados()
-    return render_template("previsao.html", campos=dados.COLUNAS_X, valores={},
-                           erro=None, resultado=None, info=info)
+    valores, erro, resultado = {}, None, None
+    if request.method == "POST":
+        valores, erro = modelo.validar_formulario(request.form)
+        if erro is None:
+            classe, prob = modelo.prever(MODELO, valores)
+            resultado = {"classe": classe, "prob": round(prob, 1)}
+        valores = valores or request.form            # mantém o que foi digitado
+    return render_template("previsao.html", campos=dados.COLUNAS_X, valores=valores,
+                           erro=erro, resultado=resultado, info=info)
 
 if __name__ == "__main__":
     # debug=False e use_reloader=False são necessários para rodar no IDLE
