@@ -75,6 +75,13 @@ def ler_resultados():
 def modelos():
     return render_template("modelos.html", info=ler_resultados())
 
+
+@app.route("/previsao")
+def previsao():
+    info = ler_resultados()
+    return render_template("previsao.html", campos=dados.COLUNAS_X, valores={},
+                           erro=None, resultado=None, info=info)
+
 if __name__ == "__main__":
     # debug=False e use_reloader=False são necessários para rodar no IDLE
     app.run(debug=False, use_reloader=False)
