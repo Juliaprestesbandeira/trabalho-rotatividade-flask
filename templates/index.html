@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block titulo %}Início{% endblock %}
+{% block conteudo %}
+<p><b>Pergunta do projeto:</b> com dados básicos de um funcionário (idade, renda mensal, distância de casa,
+tempo na empresa, satisfação e horas extras), é possível prever se ele vai sair da empresa?</p>
+ 
+<h2>Enviar um arquivo CSV</h2>
+{% if erro %}<p class="erro">{{ erro }}</p>{% endif %}
+<form method="post" action="/analise" enctype="multipart/form-data">
+  <input type="file" name="arquivo" accept=".csv">
+  <button type="submit">Enviar e analisar</button>
+</form>
+ 
+<h3>Formato esperado do CSV</h3>
+<p>Separador vírgula (ou ponto e vírgula). Colunas obrigatórias: <b>{{ colunas | join(", ") }}</b>.
+A coluna <b>saiu</b> deve ter apenas 0 (ficou) ou 1 (saiu), e <b>horas_extras</b> deve ser 0 (não) ou 1 (sim). As demais devem ser números.</p>
+<p class="aviso">Sem arquivo? Use o menu "Análise (exemplo)" para ver o CSV que já vem no projeto.</p>
+{% endblock %}
