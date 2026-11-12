@@ -53,3 +53,23 @@ Conversão para número, remoção de duplicatas, de linhas com valores ausentes
  
 ## Gráficos (3)
 Histograma da renda mensal (distribuição), barras de funcionários que ficaram e que saíram (comparação) e boxplot do tempo de empresa por classe (relação). Cada um tem interpretação na própria página.
+
+## Modelos e avaliação
+- Divisão: `train_test_split`, 80% treino / 20% teste, `random_state=42`, `stratify=y` (1176 treino, 294 teste: 247 da classe 0 e 47 da classe 1). Mesma divisão para todos os modelos.
+- O pré-processamento (padronização, quando necessária) fica dentro de um `Pipeline`, aprendido só no treino e salvo junto com o modelo.
+- Só cerca de 16% dos funcionários saíram (classes desequilibradas), então os três modelos usam `class_weight="balanced"`, que dá mais peso a quem saiu.
+- Métricas: acurácia no teste, recall e precisão de quem saiu, e matriz de confusão. Referência: chutar sempre "ficou" acertaria 84,0%, mas nunca encontraria ninguém que vai sair (recall zero).
+ 
+| Modelo | Acurácia treino | Acurácia teste | Recall (saiu) | Precisão (saiu) |
+|---|---|---|---|---|
+| Regressão Logística | 0,703 | 0,697 | 0,766 | 0,316 |
+| Árvore de Decisão (max_depth=3) | 0,793 | 0,745 | 0,574 | 0,329 |
+| Random Forest (100 árvores, max_depth=4) | 0,816 | 0,786 | 0,574 | 0,386 |
+ 
+**Escolha final: Regressão Logística.** Foi a que mais encontrou quem realmente saiu (36 de 47, recall 0,766), contra 27 de 47 das outras duas. A acurácia de treino (0,703) é próxima à de teste (0,697), sem sinal de overfitting. O erro mais grave é prever "ficou" para quem sai (falso negativo), pois o funcionário em risco passa despercebido; o custo é o maior número de falsos alarmes (78 funcionários previstos como "saiu" que ficaram), por isso a precisão é baixa (0,316).
+ 
+## Limitações
+Apenas 6 variáveis e uma base fictícia; só 47 exemplos de quem saiu no teste, então os números mudam com outro sorteio. A acurácia (0,697) fica abaixo do chute fixo (0,840), e dois em cada três alertas de saída são falsos alarmes. É um estudo didático e não deve ser usado para decidir sobre pessoas reais. O modelo fica fixo (treinado com `data/rotatividade.csv`); o CSV enviado atualiza apenas análises e gráficos.
+ 
+## Ferramentas e autoria
+Código desenvolvido com apoio da IA Claude (Anthropic), e revisado pelo grupo. Bibliotecas: Flask, Pandas, scikit-learn, Matplotlib, joblib.
