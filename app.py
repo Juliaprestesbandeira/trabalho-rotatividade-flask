@@ -43,13 +43,29 @@ def montar_analise(caminho, nome_arquivo):
     }
  
  
-@app.route("/analise")
+@app.route("/analise", methods=["GET", "POST"])
 def analise():
+    if request.method == "POST":                     # usuário enviou um CSV
+        arquivo = request.files.get("arquivo")
+        if arquivo is None or arquivo.filename == "":
+            return render_template("index.html", colunas=dados.COLUNAS_OBRIGATORIAS,
+                                   erro="Escolha um arquivo CSV antes de enviar.")
+        if not arquivo.filename.lower().endswith(".csv"):
+            return render_template("index.html", colunas=dados.COLUNAS_OBRIGATORIAS,
+                                   erro="O arquivo precisa ter extensão .csv.")
+        carimbo = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        caminho = os.path.join(PASTA_UPLOADS, carimbo + ".csv")   # guarda o original intacto
+        arquivo.save(caminho)
+        nome = arquivo.filename
+    else:                                            # GET: usa o CSV de exemplo
+        caminho, nome = ARQ_EXEMPLO, "rotatividade.csv (exemplo)"
+ 
     try:
-        resultado = montar_analise(ARQ_EXEMPLO, "rotatividade.csv (exemplo)")
+        resultado = montar_analise(caminho, nome)
     except dados.ErroCSV as e:
         return render_template("index.html", colunas=dados.COLUNAS_OBRIGATORIAS, erro=str(e))
     return render_template("analise.html", r=resultado)
+
 
 
 if __name__ == "__main__":
