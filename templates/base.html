@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <title>{% block titulo %}{% endblock %} - Rotatividade</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 900px; margin: 20px auto; padding: 0 15px; color: #222; }
+    nav a { margin-right: 15px; font-weight: bold; color: #1b5e8c; text-decoration: none; }
+    .erro { background: #fdecea; border: 1px solid #d9534f; padding: 10px; border-radius: 4px; }
+    .ok { background: #eaf6ee; border: 1px solid #4c9f70; padding: 10px; border-radius: 4px; }
+    .aviso { color: #666; font-size: 0.9em; }
+    table.tabela { border-collapse: collapse; margin: 8px 0; font-size: 0.9em; }
+    .tabela th, .tabela td { border: 1px solid #ccc; padding: 4px 8px; text-align: right; }
+    .tabela th { background: #eee; }
+    img { max-width: 100%; }
+    label { display: block; margin-top: 8px; }
+    input[type=number], input[type=text] { padding: 4px; width: 120px; }
+    button { margin-top: 12px; padding: 6px 14px; }
+  </style>
+</head>
+<body>
+  <h1>Rotatividade de Funcionários</h1>
+  <nav>
+    <a href="/">Enviar CSV</a>
+    <a href="/analise">Análise (exemplo)</a>
+    <a href="/modelos">Modelos</a>
+    <a href="/previsao">Previsão</a>
+  </nav>
+  <hr>
+  {% block conteudo %}{% endblock %}
+</body>
+</html>

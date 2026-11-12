@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block titulo %}Análise{% endblock %}
+{% block conteudo %}
+<h2>Análise de {{ r.arquivo }}</h2>
+<p class="ok">{{ r.linhas_antes }} registros e {{ r.n_colunas }} colunas no arquivo. Após a limpeza: {{ r.linhas_depois }} registros.</p>
+ 
+<h3>Amostra (5 primeiras linhas)</h3>
+{{ r.amostra | safe }}
+ 
+<h3>Diagnóstico das colunas</h3>
+{{ r.diagnostico | safe }}
+ 
+<h3>Limpeza realizada (o CSV original não é alterado)</h3>
+<ul>{% for item in r.log %}<li>{{ item }}</li>{% endfor %}</ul>
+<p class="aviso">Justificativa: duplicatas e valores ausentes/impossíveis distorcem médias e confundem o modelo;
+foram removidos em vez de preenchidos para não inventar dados.</p>
+ 
+<h3>Estatísticas das variáveis</h3>
+{{ r.estatisticas | safe }}
+<h3>Média de cada variável por classe (0 = ficou, 1 = saiu)</h3>
+{{ r.medias | safe }}
+ 
+<h3>Principais achados</h3>
+<ol>{% for a in r.achados %}<li>{{ a }}</li>{% endfor %}</ol>
+ 
+<h3>Gráficos</h3>
+<img src="data:image/png;base64,{{ r.g1 }}" alt="Histograma da renda mensal">
+<p><b>Distribuição:</b> mostra onde as rendas mensais se concentram, o quanto variam e se existem valores extremos
+(barras isoladas nas pontas, como as rendas muito altas). A linha tracejada é a média.</p>
+ 
+<img src="data:image/png;base64,{{ r.g2 }}" alt="Barras por classe">
+<p><b>Comparação:</b> mostra se as duas classes têm quantidades parecidas. Aqui quem ficou é bem mais numeroso
+do que quem saiu (classes desequilibradas): a acurácia enganaria, pois bastaria chutar sempre "ficou".</p>
+ 
+<img src="data:image/png;base64,{{ r.g3 }}" alt="Boxplot do tempo de empresa">
+<p><b>Relação:</b> compara o tempo de empresa entre as classes. Se a caixa de quem saiu está mais abaixo,
+funcionários mais novos na empresa saem mais, e o tempo de empresa ajuda a responder à pergunta do projeto.</p>
+{% endblock %}
